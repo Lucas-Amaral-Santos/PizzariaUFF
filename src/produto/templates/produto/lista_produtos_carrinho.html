@@ -5,9 +5,9 @@
       class='table table-striped table table-bordered'>
    <thead>
       <tr>
-         <th class='texto text-center'>Product</th>
-         <th class='texto text-center'>Quantity</th>
-         <th class='texto text-center'>Price</th>
+         <th class='texto text-center'>Produto</th>
+         <th class='texto text-center'>Quantidade</th>
+         <th class='texto text-center'>Preço</th>
          <th class='texto text-center'></th>
       </tr>
    </thead>
@@ -23,11 +23,11 @@
                </span>
             </td>
             <td width='15%'>
-               <form action="{% url 'produto:cart_update' %}"
+               <form action=""
                      class='mx-auto' style='width: 60px'
                      method='POST' novalidate>
                   {% csrf_token %}
-                  {{ form.quantity }}
+                  {{ form.quantidade }}
                </form>
             </td>
             <td width='15%' class='text-center pr-2'>
@@ -37,7 +37,7 @@
             </td>
             <td width='15%' class='text-center'>
                <form style='margin-bottom: 0px;'                            
-                     action ="{% url 'produto:remove_from_cart' %}" 
+                     action ="" 
                      method ='post' novalidate>                             
                   {% csrf_token %}                                          
                   <button type='button' class='btn btn-sm btn-danger remover'>             
@@ -55,7 +55,7 @@
          </td>
          <td class='text-center pr-2'>
              <span id='total' class='texto font-weight-bold'>
-                {{ total | separador_de_milhar }}
+                {{ total_do_carrinho | separador_de_milhar }}
              </span>
           </td>
           <td width='15%'>

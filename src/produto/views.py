@@ -167,7 +167,7 @@ def exibe_carrinho(request):
    order_items = OrderItem.objects.filter(user=request.user, ordered=False)
 
    resultado = order_items.aggregate(
-       total=Sum(F('quantity') * F('price'), output_field=FloatField()))
+      total=Sum(F('quantity') * F('price'), output_field=FloatField()))
    
    if resultado['total']:
       total = '{0:.2f}'.format(resultado['total'])
@@ -176,14 +176,15 @@ def exibe_carrinho(request):
 
    lista_de_ids = []
    lista_de_forms = []
+   lista_subtotal = []
    for item in order_items:
       lista_de_ids.append(item.id)
-      lista_de_forms.append(AtualizaProdutoForm(initial={'quantity': item.quantity}))
+      lista_de_forms.append(AtualizaProdutoForm(initial={'quantidade': item.quantity}))
 
    return render(request, 'produto/carrinho.html', {
       'listas': zip(order_items, lista_de_forms),
       'lista_de_ids': lista_de_ids,
-      'total': total
+      'total_do_carrinho': total
    })
 
 def cadastra_carrinho(request, id):
