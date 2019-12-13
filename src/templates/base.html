@@ -1,0 +1,74 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'produto/css/bootstrap.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'produto/css/jquery-ui.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'produto/css/base.css' %}" />
+    <title>{% block titulo %}Loja Virtual{% endblock %}</title>
+    <style>
+        {% block estilo %}
+
+        {% endblock %}
+    </style>
+</head>
+<body class="barra">
+   <nav class='navbar bg-danger navbar-dark navbar-expand-md mb-4'>
+       <div class='container'>
+          <a href="#" alt='logo' class='navbar-brand'>
+             <img class='rounded' src="{% static 'produto/images/logo.png' %}" style='width: 65px;'>
+          </a>
+          
+             <div class='navbar-nav mr-auto'>
+                <a class='nav-item nav-link' href="{% url 'produto:lista_produto' %}">
+                  <img src="{% static 'produto/images/skin/list.png' %}">
+                </a>
+                <a class='nav-item nav-link' href="{% url 'produto:cadastra_produto' %}">
+                  <img src="{% static 'produto/images/skin/pizza.png' %}">
+                </a>
+               <a class='nav-item nav-link' data-target='.lista' href='#' data-toggle='modal'>
+                  <img src="{% static 'produto/images/skin/kart.png' %}">
+                </a>
+               <a class='nav-item nav-link' href="{% url 'produto:pesquisa_produto' %}">
+                  <img src="{% static 'produto/images/skin/search.png' %}">
+                </a>
+             </div>
+          
+       </div>
+    </nav>
+
+   <div class="modal fade lista" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      {% include 'produto/lista_produtos.html' %}
+    </div>
+  </div>
+</div>
+  
+    <div class="container">
+      
+        {% block conteudo %}
+
+        {% endblock %}
+    </div>
+
+    <script src="{% static 'produto/js/jquery-3.3.1.js' %}"></script>
+
+    <script src="{% static 'produto/js/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'produto/js/jquery.mask.js' %}"></script>
+    <script src="{% static 'produto/js/popper.js' %}"></script>
+    <script src="{% static 'produto/js/bootstrap.js' %}"></script>
+    <script src="{% static 'produto/js/script.js' %}"></script>
+    <script>
+        $(document).ready(function(){
+            {% block domready %}
+
+            {% endblock %}
+        });
+    </script>
+</body>
+</html>

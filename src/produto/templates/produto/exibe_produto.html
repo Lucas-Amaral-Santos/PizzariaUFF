@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% load filtros %}
+
+{% block titulo %}
+   Cadastro de Produtos
+{% endblock %}
+
+{% block conteudo %}
+   <div style="margin-bottom: 15px;">
+      <h4 style="margin-bottom: 10px;">Cadastrar Pedido</h4>
+      <hr style="margin-bottom: 0px;">
+   </div>
+
+   {% if messages %}
+      <div class="row mb-3">
+         <div class="col-12">
+            {% for message in messages %}
+            <ul class="list-group rounded {{ message.tags }}">
+               {# Supondo a utilização de apenas info e danger #}
+               <li style="padding-top: 7px; padding-bottom: 7px;"
+                  class="list-group-item list-group-item-{% if message.tags == 'info' %}info{% else %}danger{% endif %}">
+                  {{ message }}
+               </li>
+            </ul>
+            {% endfor %}
+         </div>
+      </div>
+   {% endif %}
+
+   <div class="row mb-3">
+      <div class="col-lg-2 mb-lg-1">
+         <span class="texto"><b>Massa</b></span>
+      </div>
+      <div class="col-lg-10 mb-lg-1">
+         <span class="texto">{{ produto.categoria.nome }}</span>
+      </div>
+
+      <div class="col-lg-2 mb-lg-1">
+         <span class="texto"><b>Prato</b></span>
+      </div>
+      <div class="col-lg-10 mb-lg-1">
+         <span class="texto">{{ produto.nome }}</span>
+      </div>
+
+      <div class="col-lg-2 mb-lg-1">
+         <span class="texto"><b>Preço</b></span>
+      </div>
+      <div class="col-lg-10 mb-lg-1">
+         <span class="texto">{{ produto.preco | separador_de_milhar }}</span>
+      </div>
+
+      <div class="col-lg-2 mb-lg-1">
+         <span class="texto"><b>Data de Cadastro</b></span>
+      </div>
+      <div class="col-lg-10 mb-lg-1">
+         <span class="texto">{{ produto.data_cadastro | date:'d/m/Y' }}</span>
+      </div>
+   </div>
+
+   {% if form_remove_produto %}
+      <div class="form-group row" style="margin-bottom: 0px;">
+         <div class="col-12">
+            <div class="form-inline">
+               <a id="botao_editar" href="{% url 'produto:edita_produto' produto.id %}" class="btn btn-primary mr-3">
+                  <img src="{% static 'produto/images/skin/database_edit.png' %}" />
+                  Editar
+               </a>
+
+               {% if produto.user == request.user %}
+                  <form id="form_remove_produto" style="margin-bottom: 0px;" action="{% url 'produto:remove_produto' %}"
+                     method="post" novalidate>
+                     {% csrf_token %}
+
+                     <button id="botao_remover" type="button" class="btn btn-danger">
+                        <img src="{% static 'produto/images/skin/database_delete.png' %}" /> Remover
+                     </button>
+                  </form>
+               {% endif %}
+                  
+            </div>
+         </div>
+      </div>
+   {% endif %}
+   <form id="#inclusao" style="margin-bottom: 0px;" action="{% url 'produto:cadastra_carrinho' %}" method="post" novalidate>
+      {% csrf_token %}
+
+      <div class='form-group row' style='margin-bottom: 10px;'>        
+            <label for='id_data_cadastro'                                   
+                   class='col-lg-2 col-form-label font-weight-bold'>     
+                Quantidade                                              
+            </label>                                                     
+            <div class='col-lg-10'>                                       
+                {{ form.quantidade }}                                     
+                {% if form.quantidade.errors %}                           
+                    <div class='alert alert-danger mb-0'                   
+                         style='padding-top: 2px; padding-bottom: 2px;'>   
+                        {% for error in form.quantidade.errors %}           
+                            <small>{{ error }}</small>                       
+                        {% endfor %}                                        
+                    </div>                                                 
+                {% endif %}                                              
+            </div>                                                       
+        </div>  
+      <button type="submit" class="btn btn-primary mr-3">
+         <img src="{% static 'produto/images/skin/database_delete.png' %}" /> Adicionar
+      </button>
+   </form>
+
+{% endblock %}
+
+{% block domready %}
+   $("#botao_remover").click(function() {
+      $("#form_remove_produto").append('{{ form_remove_produto.produto_id }}')
+      $("#form_remove_produto").submit()
+   })
+
+   let lista_de_ids = {{ lista_de_ids }}
+
+   $("#inclusao").submit(function(e) {
+      e.preventDefault()
+      let url = $(this).attr('action')
+      let formData = $(this).serializeArray()
+      $.post(url, formData, function(resposta) {
+         console.log(resposta)
+         let conteudo = $(resposta).find("tbody tr:first")
+         let tr = "<tr style='display: none'>" + $(conteudo).html() +  "</tr>"
+         $("tbody tr:last").before(tr)
+         $("tr:hidden").fadeIn('slow', function() {
+            let id = $(conteudo).find("td:first").text()
+            id = parseInt(id)
+            console.log("Antes = " + lista_de_ids)
+            lista_de_ids.push(id)
+            console.log("Depois = " + lista_de_ids)
+            $("#total").text($(resposta).find("#total").text())
+         })
+      })
+   })
+
+   $("tbody").on("click", "button.remover", function() {
+      let form = $(this).parent()
+      let tr   = $(form).parent().parent()
+      let ind  = $(tr).index()
+      let id   = lista_de_ids[ind]
+      $(form).append(`<input type='hidden' name='produto_id' value=${id}>`)
+      let url = $(form).attr('action')
+      let formData = $(form).serializeArray()
+      $.post(url, formData, function(resposta) {
+         $(tr).fadeTo('slow', 0.3, function() {
+            $(this).remove()
+            console.log("Antes = " + lista_de_ids)
+            lista_de_ids.splice(ind, 1)
+            console.log("Depois = " + lista_de_ids)
+         })
+         $("#total").text(resposta)
+      })
+   })
+
+{% endblock %}

@@ -1,0 +1,21 @@
+﻿Roteiro
+=======
+
+1. Na tabela html exibida por pesquisa_produto.html inverter a ordem das colunas 
+   data_cadastro e preco.
+2. Acrescentar na tabela html de pesquisa_produto.html uma linha para exibir a 
+   totalização da soma dos valores dos produtos.
+3. Acrescentar na view a totalização da soma dos valores dos produtos.
+4. Acrescentar uma coluna na tabela exibida pela página pesquisa_produto.html
+   contendo um botão para a remoção da linha da tabela. Quando esse botão for
+   clicado deverá ser enviada uma requisição do tipo post para o servidor para
+   que o produto possa ser removido.
+5. Mandar executar a view remove_produto quando o botão de remoção for clicado.
+6. Acrescentar código javascript para que o número do produto a ser removido seja
+   fornecido através desse código em vez de contar no próprio código html.
+7. Acrescentar uma janela modal à página pesquisa_produto.html
+8. Acrescentar código css para remover o padding-right que ocorre quando a janela
+   modal é exibida.
+9. Acrescentar código javascript para que, o número do produto a ser removido seja
+   recuperado, quando o botão remover da janela modal for clicado.   
+   

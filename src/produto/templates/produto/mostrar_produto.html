@@ -1,0 +1,30 @@
+{% extends "promocoes.html" %}
+
+{% load static %}
+
+{% static 'produto/images' as baseUrl %}
+{% load filtros %}
+
+{% block content %}
+
+<h2>Refeições </h2>
+<div class="row">
+{% for item in itens %}
+    
+    <div class="card" id="borda" style="width: 550px; margin: 10px;">
+  <div class="media">
+
+  <img src="{{ post.image.url }}" alt="img">
+  <div class="card-body">
+    <h5 class="card-title">{{item.nome}}</h5>
+    <h4>{{item.preco}}</h4>
+    <p class="card-text">{{item.descricao}}</p>
+    
+    <a href="#" class="btn btn-primary">Adicionar ao carrinho</a>
+  </div>
+  </div>
+</div>
+{% endfor %}
+</div>
+
+{% endblock %}
