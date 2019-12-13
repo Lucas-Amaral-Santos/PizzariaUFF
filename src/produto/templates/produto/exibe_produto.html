@@ -61,7 +61,7 @@
    </div>
 
    {% if form_remove_produto %}
-      <div class="form-group row" style="margin-bottom: 0px;">
+      <div class="form-group row" style="margin-bottom: 10px;">
          <div class="col-12">
             <div class="form-inline">
                <a id="botao_editar" href="{% url 'produto:edita_produto' produto.id %}" class="btn btn-primary mr-3">
@@ -84,29 +84,12 @@
          </div>
       </div>
    {% endif %}
-   <form id="#inclusao" style="margin-bottom: 0px;" action="{% url 'produto:cadastra_carrinho' %}" method="post" novalidate>
+   <form id="#inclusao" style="margin-bottom: 0px;"  method="post" novalidate>
       {% csrf_token %}
 
-      <div class='form-group row' style='margin-bottom: 10px;'>        
-            <label for='id_data_cadastro'                                   
-                   class='col-lg-2 col-form-label font-weight-bold'>     
-                Quantidade                                              
-            </label>                                                     
-            <div class='col-lg-10'>                                       
-                {{ form.quantidade }}                                     
-                {% if form.quantidade.errors %}                           
-                    <div class='alert alert-danger mb-0'                   
-                         style='padding-top: 2px; padding-bottom: 2px;'>   
-                        {% for error in form.quantidade.errors %}           
-                            <small>{{ error }}</small>                       
-                        {% endfor %}                                        
-                    </div>                                                 
-                {% endif %}                                              
-            </div>                                                       
-        </div>  
-      <button type="submit" class="btn btn-primary mr-3">
-         <img src="{% static 'produto/images/skin/database_delete.png' %}" /> Adicionar
-      </button>
+      <a type="submit" href ="{{get_add_to_cart_url}}" style="padding: 27px;">
+         <img src="{% static 'produto/images/skin/database_delete.png' %}" /> Adicionar a carrinho
+      </a>
    </form>
 
 {% endblock %}
