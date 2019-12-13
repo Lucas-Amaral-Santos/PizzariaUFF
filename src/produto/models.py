@@ -28,15 +28,15 @@ class Produto(models.Model):
                              on_delete=models.DO_NOTHING,
                              null=True)
 
-    def get_add_to_cart_url(self):
-        return reverse('produto:cadastra_carrinho', args=[self.id, self.slug])
-
     class Meta:
         db_table = 'produto'
         ordering = ('nome',)
 
     def __str__(self):
         return self.nome
+
+    def get_add_to_cart_url(self):
+        return reverse('produto:cadastra_carrinho', args=[self.id])
 
 class OrderItem(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,

@@ -87,8 +87,8 @@
    <form id="#inclusao" style="margin-bottom: 0px;"  method="post" novalidate>
       {% csrf_token %}
 
-      <a type="submit" href ="{{get_add_to_cart_url}}" style="padding: 27px;">
-         <img src="{% static 'produto/images/skin/database_delete.png' %}" /> Adicionar a carrinho
+      <a type="button" href="{{ produto.get_add_to_cart_url }}" style="padding: 27px;">
+         <img src="{% static 'produto/images/skin/database_add.png' %}" /> Adicionar a carrinho
       </a>
    </form>
 

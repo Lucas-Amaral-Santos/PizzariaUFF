@@ -3,11 +3,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.core.paginator import Paginator
 
-from produto.forms import ProdutoForm, RemoveProdutoForm, PesquisaProdutoForm
-from produto.models import Produto, Foto
+from produto.forms import ProdutoForm, RemoveProdutoForm, PesquisaProdutoForm, AtualizaProdutoForm
+from produto.models import Produto, Foto, Order, OrderItem
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, F, FloatField
+from django.utils import timezone
+
 
 def mostra_produto(request):
     fotos = Foto.objects.all()
@@ -161,9 +163,31 @@ def remove_produto(request):
 def atualiza_produto(request):
    pass
 
+def exibe_carrinho(request):
+   order_items = OrderItem.objects.filter(user=request.user, ordered=False)
 
-def cadastra_carrinho(request, id, slug_do_produto):
-   item = get_object_or_404(Produto, id=id, slug=slug_do_produto)
+   resultado = order_items.aggregate(
+       total=Sum(F('quantity') * F('price'), output_field=FloatField()))
+   
+   if resultado['total']:
+      total = '{0:.2f}'.format(resultado['total'])
+   else:
+      total = '0,00'
+
+   lista_de_ids = []
+   lista_de_forms = []
+   for item in order_items:
+      lista_de_ids.append(item.id)
+      lista_de_forms.append(AtualizaProdutoForm(initial={'quantity': item.quantity}))
+
+   return render(request, 'produto/carrinho.html', {
+      'listas': zip(order_items, lista_de_forms),
+      'lista_de_ids': lista_de_ids,
+      'total': total
+   })
+
+def cadastra_carrinho(request, id):
+   item = get_object_or_404(Produto, id=id)
    order_item, created = OrderItem.objects.get_or_create(item=item, user=request.user, ordered=False)
    order_item.price = item.preco
    order_qs = Order.objects.filter(user=request.user, ordered=False)
@@ -171,7 +195,7 @@ def cadastra_carrinho(request, id, slug_do_produto):
    if order_qs.exists():
       order = order_qs[0]
 
-      if order.items.filter(item__slug=item.slug).exists():
+      if order.items.filter(item__id=item.id).exists():
          order_item.quantity += 1
          order_item.save()
          messages.info(request, "Adicionado!")
@@ -185,7 +209,7 @@ def cadastra_carrinho(request, id, slug_do_produto):
       order_item.save()
       order.items.add(order_item)
 
-   return redirect("produto:exibe_produto", id=id, slug_do_produto=slug_do_produto)
+   return redirect("produto:exibe_produto", id=id)
 
 def remove_carrinho(request):
    produto_id = request.POST.get('produto_id')

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block titulo %}
+    Prawn - Store
+{% endblock %}
+
+{% block 'corpo' %}
+<div class="container pt-5 mt-5" style="min-height: 872px;">
+   <div class="mb-5">
+   
+   <div id="ajax">
+      {% include 'produto/lista_produtos_carrinho.html' %}
+   </div>
+
+   </div>
+</div>
+{% endblock %}
+
+{% block domready %}
+   let lista_de_ids = {{ lista_de_ids }} 
+   
+   $("#ajax").on("click", ".remover", function() {
+      let form = $(this).parent()
+      let tr = $(form).parent().parent()
+      let ind = $(tr).index()
+      let id = lista_de_ids[ind]
+      $(form).append("<input type='hidden' name='produto_id' value='" + id + "'>")
+      let url = $(form).attr('action')
+      let formData = $(form).serializeArray()
+      $.post(url, formData, function(resultado) {
+         $(tr).fadeTo('slow', 0.3, function() {
+            $(this).remove()
+            lista_de_ids.splice(ind, 1)
+            $("#total").text(resultado)
+         })
+      })
+   })
+
+   $("#ajax").on("blur", "input.quantidade", function() {
+      if ($(this).val() <= 0) {
+         $(this).focus()
+         return
+      }
+      let form = $(this).parent()
+      let tr = $(form).parent().parent()
+      let ind = $(tr).index()
+      let id = lista_de_ids[ind]
+      $(form).append("<input type='hidden' name='produto_id' value='" + id + "'>")
+      let url = $(form).attr('action')
+      let formData = $(form).serializeArray()
+      $.post(url, formData, function(resultado) {
+         $("#total").text(resultado)
+      })
+   })
+{% endblock %}

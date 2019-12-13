@@ -11,7 +11,8 @@ urlpatterns = [
     path('pesquisa_pedido/', views.pesquisa_produto, name='pesquisa_produto'),
     path('lista_pedido/', views.lista_produto, name='lista_produto'),
     path('mostra_item/', views.mostra_produto, name='mostra_produto'),
-    path('cadastra_carrinho/', views.cadastra_carrinho, name='cadastra_carrinho'),
+    path('cadastra_carrinho/<int:id>', views.cadastra_carrinho, name='cadastra_carrinho'),
+    path('exibe_carrinho/', views.exibe_carrinho, name='exibe_carrinho'),
     # cadastra_produto
     # exibe_produto
     # edita_produto

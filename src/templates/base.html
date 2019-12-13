@@ -30,7 +30,7 @@
                 <a class='nav-item nav-link' href="{% url 'produto:cadastra_produto' %}">
                   <img src="{% static 'produto/images/skin/pizza.png' %}">
                 </a>
-               <a class='nav-item nav-link' data-target='.lista' href='#' data-toggle='modal'>
+               <a class='nav-item nav-link' href="{% url 'produto:exibe_carrinho' %}">
                   <img src="{% static 'produto/images/skin/kart.png' %}">
                 </a>
                <a class='nav-item nav-link' href="{% url 'produto:pesquisa_produto' %}">
