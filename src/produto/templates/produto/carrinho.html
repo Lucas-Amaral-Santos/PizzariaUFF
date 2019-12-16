@@ -33,7 +33,6 @@
       let formData = $(form).serializeArray()
       $.post(url, formData, function(resposta) {
          $("#ajax").html(resposta)
-         ids_dos_produtos_no_carrinho = recuperaIds(resposta)
       })
    })
 
