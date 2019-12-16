@@ -7,16 +7,22 @@
    <div class="mb-5">
    
    <div id="ajax">
-      {% include 'produto/lista_produtos_carrinho.html' %}
+      
    </div>
 
    </div>
 </div>
 {% endblock %}
 
+
 {% block domready %}
+ 
    let lista_de_ids = {{ lista_de_ids }} 
-   
+
+   $.get('{% url 'produto:exibe_lista_carrinho' %}', function(resposta) {
+       $("#ajax").html(resposta)
+   })
+
    $("#ajax").on("click", ".remover", function() {
       let form = $(this).parent()
       let tr = $(form).parent().parent()
@@ -25,12 +31,9 @@
       $(form).append("<input type='hidden' name='produto_id' value='" + id + "'>")
       let url = $(form).attr('action')
       let formData = $(form).serializeArray()
-      $.post(url, formData, function(resultado) {
-         $(tr).fadeTo('slow', 0.3, function() {
-            $(this).remove()
-            lista_de_ids.splice(ind, 1)
-            $("#total").text(resultado)
-         })
+      $.post(url, formData, function(resposta) {
+         $("#ajax").html(resposta)
+         ids_dos_produtos_no_carrinho = recuperaIds(resposta)
       })
    })
 
@@ -46,8 +49,9 @@
       $(form).append("<input type='hidden' name='produto_id' value='" + id + "'>")
       let url = $(form).attr('action')
       let formData = $(form).serializeArray()
-      $.post(url, formData, function(resultado) {
-         $("#total").text(resultado)
+      $.post(url, formData, function(resposta) {
+         $("#ajax").html(resposta)
       })
    })
+
 {% endblock %}

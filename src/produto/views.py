@@ -160,10 +160,16 @@ def remove_produto(request):
 
 #----------------------ADICIONA CARRINHO--------------------------------
 
-def atualiza_produto(request):
-   pass
-
 def exibe_carrinho(request):
+   order_items = OrderItem.objects.filter(user=request.user, ordered=False)
+
+   lista_de_ids = []
+   for item in order_items:
+      lista_de_ids.append(item.id)
+
+   return render(request, 'produto/carrinho.html', {'lista_de_ids': lista_de_ids})
+
+def exibe_lista_carrinho(request):
    order_items = OrderItem.objects.filter(user=request.user, ordered=False)
 
    resultado = order_items.aggregate(
@@ -179,12 +185,13 @@ def exibe_carrinho(request):
    lista_subtotal = []
    for item in order_items:
       lista_de_ids.append(item.id)
-      lista_de_forms.append(AtualizaProdutoForm(initial={'quantidade': item.quantity}))
+      lista_de_forms.append(AtualizaProdutoForm(initial={'quantity': item.quantity}))
+      lista_subtotal.append(item.quantity * item.price)
 
-   return render(request, 'produto/carrinho.html', {
-      'listas': zip(order_items, lista_de_forms),
+   return render(request, 'produto/lista_produtos_carrinho.html', {
+      'listas': zip(order_items, lista_de_forms, lista_subtotal),
       'lista_de_ids': lista_de_ids,
-      'total_do_carrinho': total
+      'total': total
    })
 
 def cadastra_carrinho(request, id):
@@ -199,33 +206,58 @@ def cadastra_carrinho(request, id):
       if order.items.filter(item__id=item.id).exists():
          order_item.quantity += 1
          order_item.save()
-         messages.info(request, "Adicionado!")
+         messages.info(request, "Atualizado!")
       else:
          order_item.save()
          order.items.add(order_item)
+         messages.info(request, "Adicionado!")
 
    else:
       ordered_date = timezone.now()
       order = Order.objects.create(user=request.user, ordered_date=ordered_date)
       order_item.save()
       order.items.add(order_item)
+      messages.info(request, "Adicionado!")
 
    return redirect("produto:exibe_produto", id=id)
 
-def remove_carrinho(request):
+def atualiza_carrinho(request):
+   produto = get_object_or_404(OrderItem, id=request.POST.get('produto_id'))
+   form = AtualizaProdutoForm(request.POST, instance=produto)
+
+   if form.is_valid():
+      form.save()
+
+      # produtos_no_carrinho = OrderItem.objects.all()
+
+      # resultado = produtos_no_carrinho.aggregate(
+      #    total=Sum(F('quantity') * F('price'), output_field=FloatField()))
+         
+      # if resultado['total']:
+      #    total = '{0:.2f}'.format(resultado['total'])
+      # else:
+      #    total = '0,00'
+
+      # return render(request, 'produto/valor_do_estoque.html', {'total': total})
+
+      return exibe_lista_carrinho(request)
+
+   else:
+      raise ValueError('Ocorreu um erro inesperado ao tentar alterar um produto.')
+
+def remove_do_carrinho(request):
    produto_id = request.POST.get('produto_id')
-   print(produto_id)
-   produto = get_object_or_404(Produto, id=produto_id)
+   produto = get_object_or_404(OrderItem, id=produto_id)
    produto.delete()
 
-   resultado = Produto.objects.all().aggregate(
-      total=Sum(F('quantidade') * F('preco'), output_field=FloatField()))
+   # resultado = OrderItem.objects.all().aggregate(
+   #     total=Sum(F('quantity') * F('price'), output_field=FloatField()))
    
-   if resultado['total']:
-      total = '{0:.2f}'.format(resultado['total'])
-   else:
-      total = '0,00'
+   # if resultado['total']:
+   #    total = '{0:.2f}'.format(resultado['total'])
+   # else:
+   #    total = '0,00'
 
-   return render(request, 'produto/valor_do_estoque.html', {
-      'total': total
-   })
+   # return render(request, 'produto/valor_do_estoque.html', {'total': total})
+   
+   return exibe_lista_carrinho(request)

@@ -1,20 +1,21 @@
 from decimal import Decimal
 from django import forms
 from django.core.validators import RegexValidator
-from produto.models import Produto, Categoria, Foto
+from produto.models import Produto, Categoria, Foto, OrderItem
 from projeto import settings
 from datetime import datetime, timedelta
 
 
 class AtualizaProdutoForm(forms.ModelForm):
-    class Meta:
-        model = Produto
-        fields = ('quantidade',)
 
-    quantidade = forms.CharField(
+    class Meta:
+        model = OrderItem
+        fields = ('quantity',)
+
+    quantity = forms.CharField(
         error_messages={'required': 'Campo obrigatório.', },
         validators=[RegexValidator(regex='^[0-9]{1,5}$', message="Informe o valor no formato 99999.")],
-        widget=forms.TextInput(attrs={'class': 'form-control form-control-sm',
+        widget=forms.TextInput(attrs={'class': 'form-control form-control-sm quantidade',
                                       'maxlength': '5',
                                       'onkeypress': 'return event.charCode >= 48 && event.charCode <= 57'}),
         required=True)

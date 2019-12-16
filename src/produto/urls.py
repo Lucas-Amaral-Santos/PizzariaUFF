@@ -13,6 +13,9 @@ urlpatterns = [
     path('mostra_item/', views.mostra_produto, name='mostra_produto'),
     path('cadastra_carrinho/<int:id>', views.cadastra_carrinho, name='cadastra_carrinho'),
     path('exibe_carrinho/', views.exibe_carrinho, name='exibe_carrinho'),
+    path('exibe_lista_carrinho/', views.exibe_lista_carrinho, name='exibe_lista_carrinho'),
+    path('atualiza_carrinho/', views.atualiza_carrinho, name='atualiza_carrinho'),
+    path('remove_do_carrinho/', views.remove_do_carrinho, name='remove_do_carrinho'),
     # cadastra_produto
     # exibe_produto
     # edita_produto

@@ -8,11 +8,12 @@
          <th class='texto text-center'>Produto</th>
          <th class='texto text-center'>Quantidade</th>
          <th class='texto text-center'>Preço</th>
+         <th class='texto text-center'>Subtotal</th>
          <th class='texto text-center'></th>
       </tr>
    </thead>
-   <tbody>
-      {% for order_item, form in listas %}
+   <tbody id="tbody2">
+      {% for order_item, form, subtotal in listas %}
          <tr>
             <td style="display: none">
                {{ order_item.id }}
@@ -23,11 +24,11 @@
                </span>
             </td>
             <td width='15%'>
-               <form action=""
+               <form action="{% url 'produto:atualiza_carrinho' %}"
                      class='mx-auto' style='width: 60px'
                      method='POST' novalidate>
                   {% csrf_token %}
-                  {{ form.quantidade }}
+                  {{ form.quantity }}
                </form>
             </td>
             <td width='15%' class='text-center pr-2'>
@@ -35,9 +36,14 @@
                   {{ order_item.price | separador_de_milhar }}
                </span>
             </td>
+            <td class='text-center pr-2'>
+               <span id='valor-subtotal' class='texto font-weight-bold'>
+               $ {{ subtotal | separador_de_milhar }}
+               </span>
+            </td>
             <td width='15%' class='text-center'>
                <form style='margin-bottom: 0px;'                            
-                     action ="" 
+                     action ="{% url 'produto:remove_do_carrinho' %}" 
                      method ='post' novalidate>                             
                   {% csrf_token %}                                          
                   <button type='button' class='btn btn-sm btn-danger remover'>             
@@ -48,14 +54,14 @@
          </tr>
       {% endfor %}
       <tr>
-         <td colspan='2' class='text-left'>
+         <td colspan='3' class='text-left'>
             <span class='texto font-weight-bold'>
                Total...
             </span>
          </td>
          <td class='text-center pr-2'>
              <span id='total' class='texto font-weight-bold'>
-                {{ total_do_carrinho | separador_de_milhar }}
+                {{ total | separador_de_milhar }}
              </span>
           </td>
           <td width='15%'>
